@@ -1,7 +1,7 @@
 #include <pickup.h>
 #include <sensors.h>
 
-bool atThePost = false;
+//bool atThePost = false;
 
 
 int pickupMode(int direction, int postDistance) {
@@ -47,5 +47,5 @@ int pickupMode(int direction, int postDistance) {
     // IS ARM LENGTH AT THE RIGHT DISTANCE?
     // ARE YOU AT THE RIGHT HEIGHT
     // DID YOU PICK UP A STONE?
-    return true;
+    return result;
 }

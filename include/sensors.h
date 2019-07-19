@@ -1,10 +1,12 @@
 #ifndef SENSORS_H
 #define SENSORS_H
 
-#define BPILL_ADDRESS 5
-#define BUFFER_SIZE 2
+#define BPILL_ADDRESS 69
+#define BUFFER_SIZE 3
 
 #define LED_PIN PB14
+#define PICKUP_SWITCH PA5
+#define SERVO_PIN PB1
 
 #define PING 0
 #define PICKUP 1

@@ -11,6 +11,6 @@
 
 int pickupMode(int direction, int postDistance);
 extern int state;
-bool atThePost; 
+// bool atThePost; 
 
 #endif

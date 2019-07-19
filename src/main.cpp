@@ -3,10 +3,9 @@
 #include <stdint.h>
 #include "PinNames.h"
 #include <pickup.h>
-
-
-#define BPILL_ADDRESS 5
-#define BUFFER_SIZE 3
+#include <sensors.h>
+#include <Servo.h>
+#include <claw.h>
 
 #define LED_PIN PB14
 
@@ -20,6 +19,8 @@ bool clawSuccess = 0.0;
 float armAngle = 0.0;
 
 int state = GOING_TO_MAX;
+
+Servo clawServo;
 
 volatile byte x = 1;
 void receiveEvent(int numBytes);
@@ -72,14 +73,27 @@ void requestEvent() {
 void setup() {
   Serial.begin(9600);
   delay(5000);
-  pinMode(LED_PIN, OUTPUT);
-  digitalWrite(LED_PIN, HIGH);
+  pinMode(PICKUP_SWITCH, INPUT);
+  clawServo.attach(SERVO_PIN);
   Wire.begin(BPILL_ADDRESS);
   Wire.onReceive(receiveEvent);
   Wire.onRequest(requestEvent);
   Serial.println("setup");
+  Serial.println("Setup complete");
 }
 
 void loop() {
-  //delay(500);
+
+//TESTING WITH SERVO
+//clawServo.write(60);
+// writeSpeed(clawServo,200,60);
+clawServo.write(37);
+//writeSpeed(clawServo,400,0);
+delay(3000);
+int angle = clawServo.read();
+Serial.println("Angle of servo:");
+Serial.print(angle);
+
+Serial.println("loop iteration done");
+
 }
