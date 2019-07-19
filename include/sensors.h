@@ -19,5 +19,6 @@ extern float armHeight;
 extern float armLength;
 extern bool clawSuccess;
 extern float armAngle;
+extern int doneYet;
 
 #endif

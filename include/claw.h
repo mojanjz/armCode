@@ -10,3 +10,5 @@
 boolean clawPickupAttempt (Servo);
 void writeSpeed(Servo , int , int );
 void moveToRest(Servo );
+boolean clawDropoffAttempt(Servo);
+boolean pickUpStone(Servo);

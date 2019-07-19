@@ -83,17 +83,28 @@ void setup() {
 }
 
 void loop() {
+// bool pickUpSuccessful = false;
+//  pickUpSuccessful = clawPickupAttempt(clawServo);
+//  if(pickUpSuccessful == false){
+//    Serial.println("Did not pick up");
+//  }
+//  else{
+//    Serial.println("Pickup successful");
+//  }
+ 
+//  clawServo.write(rest);
+//  delay(1000);
 
-//TESTING WITH SERVO
-//clawServo.write(60);
-// writeSpeed(clawServo,200,60);
-clawServo.write(37);
-//writeSpeed(clawServo,400,0);
-delay(3000);
-int angle = clawServo.read();
-Serial.println("Angle of servo:");
-Serial.print(angle);
 
-Serial.println("loop iteration done");
+
+// clawServo.write(closed);
+// delay(1000);
+// clawDropoffAttempt(clawServo);
+// Serial.println("Drop off completed.");
+
+bool successful = false;
+
+successful = pickUpStone(clawServo);
+Serial.print(successful);
 
 }

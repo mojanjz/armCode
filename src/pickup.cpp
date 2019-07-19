@@ -1,7 +1,10 @@
 #include <pickup.h>
 #include <sensors.h>
+#include <claw.h>
+#include <Servo.h>
 
 //bool atThePost = false;
+
 
 
 int pickupMode(int direction, int postDistance) {
@@ -34,10 +37,17 @@ int pickupMode(int direction, int postDistance) {
             // else keep lowering arm
             break;
         case PICKUP_STONE:
-            // bool pickeUpYet = pickUpStone();
-            // if (pickUpYet == true) {
-                
+            bool pickedUpYet = pickUpStone(clawServo); // try to pick up stone
+            if (pickedUpYet == true) {
+                result = 1; //we picked up the stone successfully
+                state = CONTRACT_ARM;
+            }
+            else {
+                result = 2; //we tried 3 times, and we cant pick up the stone.
+                // how do we assign state?
+            }         
             break;
+
         case CONTRACT_ARM:
             break;
     }

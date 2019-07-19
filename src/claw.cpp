@@ -6,12 +6,6 @@
 #include <Servo.h>
 #include <sensors.h>
 
-#define closed 20 //degrees
-#define rest 60 //degrees
-#define MICROSWITCH PB10
-#define SERVOPIN PB1
-#define ON 1
-
 /*
 *Attempts to pickup an infinity stone one time.  
 *Returns true or false based on whether the stone was picked up
@@ -22,7 +16,7 @@ boolean clawPickupAttempt(Servo ourServo)
   boolean successful = false;
   ourServo.write(closed);
   //wait for servo to get there
-  delay(30);
+  delay(2000);
 
   //check if switch is actuated
   successful = digitalRead(PICKUP_SWITCH);
@@ -65,4 +59,28 @@ void moveToRest(Servo ourServo)
 {
   Serial.println("moving to rest");
   ourServo.write(rest);
+}
+
+boolean clawDropoffAttempt(Servo ourServo)
+{
+ boolean complete = true;
+  writeSpeed(ourServo, 400, rest);
+  // //wait for servo to get there
+  return complete;
+}
+
+boolean pickUpStone(Servo ourServo){
+  bool successful = false;
+  for (int numAttempts = 0; numAttempts<3; numAttempts++){
+    Serial.print("Attempt ");
+    Serial.println(numAttempts);
+
+    successful = clawPickupAttempt(ourServo);
+    if (successful == true){
+      return successful;
+    }
+    ourServo.write(rest);
+    delay(1000);
+  }
+  return successful;
 }
