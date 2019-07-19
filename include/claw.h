@@ -4,7 +4,7 @@
 #include <math.h>
 #include <Servo.h>
 
-#define closed 20 //degrees
+#define closed 37 //degrees
 #define rest 60 //degrees
 
 boolean clawPickupAttempt (Servo);

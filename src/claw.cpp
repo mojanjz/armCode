@@ -20,8 +20,12 @@
 boolean clawPickupAttempt(Servo ourServo)
 {
   boolean successful = false;
-  ourServo.write(0);
-  
+  ourServo.write(closed);
+  //wait for servo to get there
+  delay(30);
+
+  //check if switch is actuated
+  successful = digitalRead(PICKUP_SWITCH);
 
   return successful;
 }
