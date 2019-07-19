@@ -21,7 +21,7 @@ int pickupMode(int direction, int postDistance) {
             else {
                 state = EXPAND_ARM;
             }
-            result = 0; // not done yet
+            doneYet = 0; // not done yet
             break;
         case EXPAND_ARM:
             if (armLength < targetLength) {
@@ -30,7 +30,7 @@ int pickupMode(int direction, int postDistance) {
             else {
                 state = LOWERING_ARM;
             }
-            result = 0; //not done yet
+            doneYet = 0; //not done yet
             break;
         case LOWERING_ARM:
             // if the switch is on move to pick up stone mode
@@ -49,6 +49,12 @@ int pickupMode(int direction, int postDistance) {
             break;
 
         case CONTRACT_ARM:
+        if(result == 1){
+            doneYet = 1;
+        }
+        else {
+            doneYet = 2;
+        }
             break;
     }
 
@@ -57,5 +63,5 @@ int pickupMode(int direction, int postDistance) {
     // IS ARM LENGTH AT THE RIGHT DISTANCE?
     // ARE YOU AT THE RIGHT HEIGHT
     // DID YOU PICK UP A STONE?
-    return result;
+    return doneYet;
 }

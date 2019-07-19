@@ -8,10 +8,13 @@
 #include <claw.h>
 
 #define LED_PIN PB14
+#define SONAR_ECHO PA7
+#define SONAR_TRIG PA6
 
 #define PING 0
 #define PICKUP 1
 #define PUTDOWN 2
+
 
 float armHeight = 0.0;
 float armLength = 0.0;
@@ -19,6 +22,8 @@ bool clawSuccess = 0.0;
 float armAngle = 0.0;
 
 int state = GOING_TO_MAX;
+
+int doneYet = 0;
 
 Servo clawServo;
 
@@ -30,11 +35,12 @@ void receiveEvent(int numBytes) {
   int receivedBytes = 0;
   int direction = 0;
   int postDistance = 0;
+
   // are you done the task
   // 0 : not done yet
   // 1 : done successfully
   // 2 : I could not do it
-  int doneYet = 0;
+  
   while (Wire.available() && receivedBytes < BUFFER_SIZE){
     receiveBuffer[receivedBytes] = Wire.read();
     receivedBytes ++;
@@ -65,8 +71,8 @@ void receiveEvent(int numBytes) {
 
 void requestEvent() {
   // DO NOT USE A DELAY IN THIS FUNCTION
-  Serial.println("Slave: reQUESTED");
-  Wire.write("hello\n");
+  Serial.println("Slave: REQUESTED");
+  Wire.write(doneYet);
   Serial.println("Slave: replied");
 }
 
@@ -83,28 +89,5 @@ void setup() {
 }
 
 void loop() {
-// bool pickUpSuccessful = false;
-//  pickUpSuccessful = clawPickupAttempt(clawServo);
-//  if(pickUpSuccessful == false){
-//    Serial.println("Did not pick up");
-//  }
-//  else{
-//    Serial.println("Pickup successful");
-//  }
- 
-//  clawServo.write(rest);
-//  delay(1000);
-
-
-
-// clawServo.write(closed);
-// delay(1000);
-// clawDropoffAttempt(clawServo);
-// Serial.println("Drop off completed.");
-
-bool successful = false;
-
-successful = pickUpStone(clawServo);
-Serial.print(successful);
 
 }
