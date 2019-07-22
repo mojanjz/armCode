@@ -3,16 +3,18 @@
 #include <stdint.h>
 #include "PinNames.h"
 #include <pickup.h>
-
-
-#define BPILL_ADDRESS 5
-#define BUFFER_SIZE 3
+#include <sensors.h>
+#include <Servo.h>
+#include <claw.h>
 
 #define LED_PIN PB14
+#define SONAR_ECHO PA7
+#define SONAR_TRIG PA6
 
 #define PING 0
 #define PICKUP 1
 #define PUTDOWN 2
+
 
 float armHeight = 0.0;
 float armLength = 0.0;
@@ -20,6 +22,10 @@ bool clawSuccess = 0.0;
 float armAngle = 0.0;
 
 int state = GOING_TO_MAX;
+
+int doneYet = 0;
+
+Servo clawServo;
 
 volatile byte x = 1;
 void receiveEvent(int numBytes);
@@ -29,11 +35,12 @@ void receiveEvent(int numBytes) {
   int receivedBytes = 0;
   int direction = 0;
   int postDistance = 0;
+
   // are you done the task
   // 0 : not done yet
   // 1 : done successfully
   // 2 : I could not do it
-  int doneYet = 0;
+  
   while (Wire.available() && receivedBytes < BUFFER_SIZE){
     receiveBuffer[receivedBytes] = Wire.read();
     receivedBytes ++;
@@ -64,22 +71,23 @@ void receiveEvent(int numBytes) {
 
 void requestEvent() {
   // DO NOT USE A DELAY IN THIS FUNCTION
-  Serial.println("Slave: reQUESTED");
-  Wire.write("hello\n");
+  Serial.println("Slave: REQUESTED");
+  Wire.write(doneYet);
   Serial.println("Slave: replied");
 }
 
 void setup() {
   Serial.begin(9600);
   delay(5000);
-  pinMode(LED_PIN, OUTPUT);
-  digitalWrite(LED_PIN, HIGH);
+  pinMode(PICKUP_SWITCH, INPUT);
+  clawServo.attach(SERVO_PIN);
   Wire.begin(BPILL_ADDRESS);
   Wire.onReceive(receiveEvent);
   Wire.onRequest(requestEvent);
   Serial.println("setup");
+  Serial.println("Setup complete");
 }
 
 void loop() {
-  //delay(500);
+
 }
