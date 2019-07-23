@@ -32,12 +32,15 @@ Servo clawServo;
 
 volatile byte x = 1;
 int counter = 0;
-byte doneYet = 0;
+byte doneYet = 1;
 
 void receiveEvent(int);
 void requestEvent(int);
 
 void receiveEvent(int numBytes) {
+  //change that action is in progress
+  doneYet = 0;
+
   Serial.println("I've received something");
   byte receiveBuffer [BUFFER_SIZE];// CHANGE
   int receivedBytes = 0;
@@ -94,6 +97,7 @@ void loop() {
 
     case PICKUP:
     Serial.println("Pickup switch statement");
+    //change that the action is either complete, or unable
     doneYet = (byte)pickupMode(direction,postDistance);
     Serial.print("doneYet:");
     Serial.println(doneYet);

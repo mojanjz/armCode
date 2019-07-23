@@ -9,6 +9,7 @@
 #define EXPAND_ARM 2
 #define PICKUP_STONE 3
 #define CONTRACT_ARM 4
+#define ADJUST_CLAW_POSITIONING 5
 
 #define DISTANCE_MULTIPLIER 1 //mapping sonar distance to encoder distance
 

@@ -41,6 +41,8 @@ int pickupMode(int direction, int postDistance) {
         case CONTRACT_ARM:
 
         break;
+
+        case ADJUST_CLAW_POSITIONING:
     }
     }
 
