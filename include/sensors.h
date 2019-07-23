@@ -12,6 +12,13 @@
 #define PICKUP 1
 #define PUTDOWN 2
 
+#define LEFT 0
+#define RIGHT 1
+
+#define IN_PROGRESS 0
+#define COMPLETE 1
+#define UNABLE 2
+
 #define MAXHEIGHT 340 // CHANGE
 
 // global variables
@@ -19,6 +26,5 @@ extern float armHeight;
 extern float armLength;
 extern bool clawSuccess;
 extern float armAngle;
-extern int doneYet;
-
+extern byte doneYet;
 #endif

@@ -7,26 +7,40 @@
 #include <sensors.h>
 
 /*
-*Attempts to pickup an infinity stone one time.  
+*Attempts to pickup an infinity stone one time.
 *Returns true or false based on whether the stone was picked up
 *Parameters: Servo, the servo performing the action.
  */
 boolean clawPickupAttempt(Servo ourServo)
 {
   boolean successful = false;
+  Serial.println("Attempting to close servo on inf stone:");
   ourServo.write(closed);
   //wait for servo to get there
-  delay(2000);
-
+  delay(1000);
+  Serial.print("Status:");
+  Serial.println(successful);
   //check if switch is actuated
   successful = digitalRead(PICKUP_SWITCH);
 
   return successful;
 }
+// boolean clawPickupAttempt(Servo ourServo)
+// {
+//   boolean successful = false;
+//   ourServo.write(closed);
+//   //wait for servo to get there
+//   delay(2000);
+
+//   //check if switch is actuated
+//   successful = digitalRead(PICKUP_SWITCH);
+
+//   return successful;
+// }
 
 /*
-*Moves servo to a specified position, int setpos, in degrees (between 0 & 180) 
-*at a specified speed, int speed, (between 0-800, with zero being the max speed) 
+*Moves servo to a specified position, int setpos, in degrees (between 0 & 180)
+*at a specified speed, int speed, (between 0-800, with zero being the max speed)
  */
 void writeSpeed(Servo ourServo, int speed, int setpos)
 {

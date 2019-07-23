@@ -1,6 +1,9 @@
 #ifndef PICKUP_H
 #define PICKUP_H
 
+#include <Arduino.h>
+#include <Servo.h>
+
 #define GOING_TO_MAX 0
 #define LOWERING_ARM 1
 #define EXPAND_ARM 2
@@ -9,10 +12,10 @@
 
 #define DISTANCE_MULTIPLIER 1 //mapping sonar distance to encoder distance
 
-int64_t pickupMode(int direction, int postDistance);
+int pickupMode(int direction, int postDistance);
 extern int state;
-// bool atThePost; 
+// bool atThePost;
 
-Servo clawServo;
+extern Servo clawServo;
 
 #endif
