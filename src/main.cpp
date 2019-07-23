@@ -5,15 +5,12 @@
 #include <pickup.h>
 #include <sensors.h>
 #include <Servo.h>
-#include <claw.h>
+#include <movement.h>
 
 #define SONAR_ECHO PA7
 #define SONAR_TRIG PA6
 #define LED_PIN PB14
 
-#define PING 1
-#define PICKUP 2
-#define PUTDOWN 3
 #define BPILL_ADDRESS 69
 #define BUFFER_SIZE 3
 
@@ -27,18 +24,23 @@ int state = GOING_TO_MAX;
 int action;//CHANGE
 int direction;
 int postDistance;
+//ensure rack is at position 0 when starting robot/ running code!
+int rackDistance = 0;
+//int counter = 0;
 
 Servo clawServo;
 
 volatile byte x = 1;
-int counter = 0;
 byte doneYet = 1;
 
 void receiveEvent(int);
 void requestEvent(int);
 
+/*
+ *Slave recieves an event from the master
+ */
 void receiveEvent(int numBytes) {
-  //change that action is in progress
+  //change so that action is in progress
   doneYet = 0;
 
   Serial.println("I've received something");
@@ -67,6 +69,9 @@ void receiveEvent(int numBytes) {
   postDistance = receiveBuffer[2];
 }
 
+/*
+ *Slave requests an event from master
+ */
 void requestEvent() {
   // DO NOT USE A DELAY IN THIS FUNCTION
   Serial.println("Slave: Requested");
@@ -74,6 +79,9 @@ void requestEvent() {
   Serial.println("Slave: Replied");
 }
 
+/*
+ *Setup Loop
+ */
 void setup() {
   Serial.begin(9600);
   delay(5000);
@@ -81,8 +89,13 @@ void setup() {
   Wire.onReceive(receiveEvent);
   Wire.onRequest(requestEvent);
   pinMode(LED_PIN, OUTPUT);
+  //CLAW SERVO
   clawServo.attach(SERVO_PIN);
   clawServo.write(rest);
+  //RACK & PINION
+  pinMode (INPUT_CLK,INPUT);
+  pinMode (INPUT_DT,INPUT);
+
   delay(500);
   Serial.println("Setup");
 }

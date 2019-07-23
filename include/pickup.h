@@ -14,7 +14,7 @@
 #define DISTANCE_MULTIPLIER 1 //mapping sonar distance to encoder distance
 
 int pickupMode(int direction, int postDistance);
-extern int state;
+
 // bool atThePost;
 
 extern Servo clawServo;
