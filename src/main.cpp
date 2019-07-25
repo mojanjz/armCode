@@ -21,14 +21,14 @@ bool clawSuccess = 0.0;
 float armAngle = 0.0;
 
 int state = GOING_TO_MAX;
-int action;//CHANGE
+int action = 0;//CHANGE
 int direction;
 int postDistance;
-//ensure rack is at position 0 when starting robot/ running code!
-int rackDistance = 0;
+
 //int counter = 0;
 
 Servo clawServo;
+//Servo armServo;
 
 volatile byte x = 1;
 byte doneYet = 1;
@@ -85,6 +85,7 @@ void requestEvent() {
 void setup() {
   Serial.begin(9600);
   delay(5000);
+  Serial.println("Hello");
   Wire.begin(BPILL_ADDRESS);
   Wire.onReceive(receiveEvent);
   Wire.onRequest(requestEvent);
@@ -95,6 +96,20 @@ void setup() {
   //RACK & PINION
   pinMode (INPUT_CLK,INPUT);
   pinMode (INPUT_DT,INPUT);
+  pinMode(RIGHT_CLAW_SWITCH_PIN, INPUT);
+  pinMode(LEFT_CLAW_SWITCH_PIN, INPUT);
+  //Arm Servo
+  //armServo.attach(ARM_SERVO_PIN);
+  //Initialize the motors 
+  pinMode(LEAD_SCREW_BOTTOM_SWITCH,INPUT);
+  pinMode(LEAD_SCREW_TOP_SWITCH,INPUT);
+  pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 1);
+  pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 1);
+  //If this works add other motors too
+
+lowerArmToBottom();
+//raiseArmToTop();
+//armServo.write(0);
 
   delay(500);
   Serial.println("Setup");
@@ -104,8 +119,8 @@ void loop() {
   //Note: slave will still respond to the master as actions in this loop are being carried out
 
   switch (action){
-    Serial.println("Switch statement:");
     case PING:
+
     break;
 
     case PICKUP:
@@ -121,9 +136,3 @@ void loop() {
   }
     action = 0;
 }
-
-    // //Debugging Code with LED
-    // digitalWrite(LED_PIN, HIGH);
-    // delay(1000);
-    // digitalWrite(LED_PIN,LOW);
-    // delay(1000);

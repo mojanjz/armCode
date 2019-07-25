@@ -5,11 +5,15 @@
 #include <Servo.h>
 
 #define GOING_TO_MAX 0
-#define LOWERING_ARM 1
+#define ROTATING_ARM_TO_SIDE 1
 #define EXPAND_ARM 2
-#define PICKUP_STONE 3
-#define CONTRACT_ARM 4
-#define ADJUST_CLAW_POSITIONING 5
+#define LOWERING_ARM 3
+#define PICKUP_STONE 4
+#define RAISE_ARM_AFTER_PICKUP 5
+#define CONTRACT_ARM 6
+#define ROTATING_ARM_TO_FRONT 7
+#define LOWERING_ARM_TO_DRIVE 8
+#define ADJUST_CLAW_POSITIONING 9
 
 #define DISTANCE_MULTIPLIER 1 //mapping sonar distance to encoder distance
 
@@ -18,5 +22,6 @@ int pickupMode(int direction, int postDistance);
 // bool atThePost;
 
 extern Servo clawServo;
+//extern Servo armServo;
 
 #endif

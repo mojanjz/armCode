@@ -5,17 +5,27 @@
 #define BUFFER_SIZE 3
 
 //Pins for arm
-#define LED_PIN PB14
-#define PICKUP_SWITCH_PIN PA5
-#define SERVO_PIN PB1
-#define LEFT_CLAW_SWITCH_PIN PA4
-#define RIGHT_CLAW_SWITCH_PIN PA3
+#define PICKUP_SWITCH_PIN PB14
+#define SERVO_PIN PA1
+#define LEFT_CLAW_SWITCH_PIN PB13
+#define RIGHT_CLAW_SWITCH_PIN PB12
 
 //Pins for rack and pinion
-#define INPUT_CLK PA1 
-#define INPUT_DT PA2
-#define PINION_IN PA_6
-#define PINION_OUT PA_7
+#define INPUT_CLK PA5 
+#define INPUT_DT PA4
+#define PINION_IN PA_7
+#define PINION_OUT PA_6
+
+//Pins for lead screw
+ #define LEAD_SCREW_UP_PIN PB_0
+ #define LEAD_SCREW_DOWN_PIN PB_1
+ #define LEAD_SCREW_BOTTOM_SWITCH PB10
+ #define LEAD_SCREW_TOP_SWITCH PB11
+
+ #define ARM_SERVO_PIN PA0
+
+
+#define ARM_SONAR_OFFSET 6.065 //TO BE CHECKED
 
 #define PING 0
 #define PICKUP 1
