@@ -94,22 +94,23 @@ void setup() {
   clawServo.attach(SERVO_PIN);
   clawServo.write(rest);
   //RACK & PINION
-  pinMode (INPUT_CLK,INPUT);
-  pinMode (INPUT_DT,INPUT);
-  pinMode(RIGHT_CLAW_SWITCH_PIN, INPUT);
-  pinMode(LEFT_CLAW_SWITCH_PIN, INPUT);
+  pinMode (INPUT_CLK,INPUT); //potentially pull up?
+  pinMode (INPUT_DT,INPUT); //potentially pull up?
+  pinMode(RIGHT_CLAW_SWITCH_PIN, INPUT_PULLUP);
+  pinMode(LEFT_CLAW_SWITCH_PIN, INPUT_PULLUP);
+  pinMode(PICKUP_SWITCH_PIN, INPUT_PULLUP);
+  
   //Arm Servo
   //armServo.attach(ARM_SERVO_PIN);
   //Initialize the motors 
-  pinMode(LEAD_SCREW_BOTTOM_SWITCH,INPUT);
-  pinMode(LEAD_SCREW_TOP_SWITCH,INPUT);
+  pinMode(LEAD_SCREW_BOTTOM_SWITCH,INPUT_PULLUP);
+  pinMode(LEAD_SCREW_TOP_SWITCH,INPUT_PULLUP);
   pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 1);
   pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 1);
   //If this works add other motors too
 
-lowerArmToBottom();
+//lowerArmToBottom();
 //raiseArmToTop();
-//armServo.write(0);
 
   delay(500);
   Serial.println("Setup");

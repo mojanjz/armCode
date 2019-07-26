@@ -5,10 +5,10 @@
 #define BUFFER_SIZE 3
 
 //Pins for arm
-#define PICKUP_SWITCH_PIN PB14
+#define PICKUP_SWITCH_PIN PB13
 #define SERVO_PIN PA1
-#define LEFT_CLAW_SWITCH_PIN PB13
-#define RIGHT_CLAW_SWITCH_PIN PB12
+#define LEFT_CLAW_SWITCH_PIN PB12
+#define RIGHT_CLAW_SWITCH_PIN PB14
 
 //Pins for rack and pinion
 #define INPUT_CLK PA5 

@@ -73,11 +73,11 @@ if (targetDistance > 0){
      }
    }
    if (millis()%500==0){
-     Serial.print("Direction: ");
-     Serial.print(encdir);
-     Serial.print(" -- Value: ");
-     Serial.println(counter);
-     Serial.println(distance);
+    //  Serial.print("Direction: ");
+    //  Serial.print(encdir);
+    //  Serial.print(" -- Value: ");
+    //  Serial.println(counter);
+    //  Serial.println(distance);
    }
      //CHECK
      distance = counter*pinionDistanceMultiplier;
@@ -111,13 +111,13 @@ else{
        encdir ="CW";
      }
    }
-   if (millis()%500==0){
-     Serial.print("Direction: ");
-     Serial.print(encdir);
-     Serial.print(" -- Value: ");
-     Serial.println(counter);
-     Serial.println(distance);
-   }
+  //  if (millis()%500==0){
+  //    Serial.print("Direction: ");
+  //    Serial.print(encdir);
+  //    Serial.print(" -- Value: ");
+  //    Serial.println(counter);
+  //    Serial.println(distance);
+  //  }
      //CHECK
      distance = counter*pinionDistanceMultiplier;
       // keep powering the motor until the distance is right
@@ -155,19 +155,17 @@ void raiseArmToTop(){
   Serial.println ("raiseArmToTop");
        pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 1);
        pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 1);
+
        Serial.print("Switch status:");
        Serial.println(digitalRead(LEAD_SCREW_TOP_SWITCH));
-       while (digitalRead(LEAD_SCREW_TOP_SWITCH)==0){
+
+       while (digitalRead(LEAD_SCREW_TOP_SWITCH)==LOW){
        pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, liftSpeed, 0);
        pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 0);
-       Serial.println("Lifting while loop");
-       Serial.print("Switch status:");
-       Serial.println(digitalRead(LEAD_SCREW_TOP_SWITCH));
        }
        
        pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 0);
        pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 0);
-
 }
 
 /*
@@ -190,11 +188,28 @@ void lowerArmToPost (){
     pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 1);
     pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 1);
 
-  while (digitalRead(RIGHT_CLAW_SWITCH_PIN) == LOW && digitalRead(LEFT_CLAW_SWITCH_PIN)== LOW && digitalRead(LEAD_SCREW_BOTTOM_SWITCH) !=HIGH ){
+    // Serial.print("Right claw switch: ");
+    // Serial.println(digitalRead(RIGHT_CLAW_SWITCH_PIN));
+    // Serial.print("Left claw switch: ");
+    // Serial.println(digitalRead(LEFT_CLAW_SWITCH_PIN));
+    // Serial.print("Lead screw bottom switch: ");
+    // Serial.println(digitalRead(LEAD_SCREW_BOTTOM_SWITCH));
+
+
+//TO FIX = CHANGE SECOND LEFT SWITCH CONDITIONAL STATEMENT, TO RIGHT SWITCH CONDITIONAL STATEMENT - RIGHT SWITCH ALWAYS HIGH!
+  while ( digitalRead(LEFT_CLAW_SWITCH_PIN)== LOW && digitalRead(LEFT_CLAW_SWITCH_PIN)== LOW && digitalRead(LEAD_SCREW_BOTTOM_SWITCH) !=HIGH ){
     pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 0);
-    pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, descendSpeed, 0);
+    pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 150, 0);
+    delay (100);
   }
 
     pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 0);
     pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 0);
+
+    // Serial.print("Right claw switch: ");
+    // Serial.println(digitalRead(RIGHT_CLAW_SWITCH_PIN));
+    // Serial.print("Left claw switch: ");
+    // Serial.println(digitalRead(LEFT_CLAW_SWITCH_PIN));
+    // Serial.print("Lead screw bottom switch: ");
+    // Serial.println(digitalRead(LEAD_SCREW_BOTTOM_SWITCH));
 }

@@ -27,13 +27,15 @@ while ( complete == IN_PROGRESS){
         case GOING_TO_MAX:
         Serial.println("Raising arm to max:");
         raiseArmToTop();
-        state = ROTATING_ARM_TO_SIDE;
+        //state = ROTATING_ARM_TO_SIDE;
+        state = EXPAND_ARM;
         //complete = COMPLETE;
 
         break;
 
         // case ROTATING_ARM_TO_SIDE:
         // // call servo and write to 90 depending on which side the post is on.
+        // Serial.println("Rotating arm to side!");
         // if(direction == LEFT){
         //     Serial.println("Rotating arm to left:");
         //     armServo.write(90); //CHANGE THIS TO BE CORRECT ANGLE
@@ -46,17 +48,20 @@ while ( complete == IN_PROGRESS){
         // complete = COMPLETE;
         // break;
 
-        // case EXPAND_ARM:
-        // Serial.println("Expand Arm:");
-        // rackDistance = writeToRackAndPinion(targetLength, rackDistance);
-        // state = LOWERING_ARM;
-        // break;
+        case EXPAND_ARM:
+        Serial.println("Expand Arm:");
+        rackDistance = writeToRackAndPinion(targetLength, rackDistance);
+        state = LOWERING_ARM;
+        //complete = COMPLETE;
 
-        // case LOWERING_ARM:
-        // Serial.println("Lowering Arm:");
-        // lowerArmToPost();
-        // state = PICKUP_STONE;
-        // break;
+        break;
+
+        case LOWERING_ARM:
+        Serial.println("Lowering Arm:");
+        lowerArmToPost();
+        //state = PICKUP_STONE;
+        complete = COMPLETE;
+        break;
 
         // //MAKE SURE WE ADD COUNTER FOR PICKUP ATTEMPTS!!!!!
 
