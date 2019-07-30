@@ -6,13 +6,14 @@
 
 //Pins for arm
 #define PICKUP_SWITCH_PIN PB13
-#define SERVO_PIN PA1
-#define LEFT_CLAW_SWITCH_PIN PB12
-#define RIGHT_CLAW_SWITCH_PIN PB14
+#define CLAW_SERVO_PIN PA1
+#define LEFT_CLAW_SWITCH_PIN PB14
+#define RIGHT_CLAW_SWITCH_PIN PB12
 
 //Pins for rack and pinion
-#define INPUT_CLK PA5 
-#define INPUT_DT PA4
+#define INPUT_CLK PA4 
+#define INPUT_DT PA5
+#define RACK_LIMIT_SWITCH PB15
 #define PINION_IN PA_7
 #define PINION_OUT PA_6
 

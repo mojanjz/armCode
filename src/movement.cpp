@@ -83,12 +83,12 @@ if (targetDistance > 0){
      distance = counter*pinionDistanceMultiplier;
       // keep powering the motor until the distance is right
      if (setPos>rackPosition){
-      pwm_start(PINION_OUT, 100000, 250, 150, 0);
+      pwm_start(PINION_OUT, 100000, 250, rackSpeed, 0);
       pwm_start(PINION_IN, 100000, 250, 0, 0);
 
      }
      else{
-      pwm_start(PINION_IN, 100000, 250, 150, 0);
+      pwm_start(PINION_IN, 100000, 250, rackSpeed, 0);
       pwm_start(PINION_OUT, 100000, 250, 0, 0);
      }
       // Update previousStateCLK with the current state
@@ -122,12 +122,12 @@ else{
      distance = counter*pinionDistanceMultiplier;
       // keep powering the motor until the distance is right
      if (setPos>rackPosition){
-      pwm_start(PINION_OUT, 100000, 250, 150, 0);
+      pwm_start(PINION_OUT, 100000, 250, rackSpeed, 0);
       pwm_start(PINION_IN, 100000, 250, 0, 0);
 
      }
      else{
-      pwm_start(PINION_IN, 100000, 250, 150, 0);
+      pwm_start(PINION_IN, 100000, 250, rackSpeed, 0);
       pwm_start(PINION_OUT, 100000, 250, 0, 0);
      }
       // Update previousStateCLK with the current state
@@ -146,45 +146,74 @@ else{
    return rackPosition + distance;
 }
 
+void resetRack (){
+  pwm_start(PINION_IN, 100000, 250, 0, 1);
+  pwm_start(PINION_OUT, 100000, 250, 0, 1);
+  while (digitalRead(RACK_LIMIT_SWITCH)==LOW){
+    pwm_start(PINION_IN, 100000, 250, rackSpeed, 0);
+    pwm_start(PINION_OUT, 100000, 250, 0, 0);
+  }
+  pwm_start(PINION_IN, 100000, 250, 0, 0);
+  pwm_start(PINION_OUT, 100000, 250, 0, 0);
+}
+
+void fullSendRack(){
+  pwm_start(PINION_IN, 100000, 250, 0, 1);
+  pwm_start(PINION_OUT, 100000, 250, 0, 1);
+  while (digitalRead(RACK_LIMIT_SWITCH)==LOW){
+    pwm_start(PINION_IN, 100000, 250, 0, 0);
+    pwm_start(PINION_OUT, 100000, 250, rackSpeed, 0);
+  }
+  pwm_start(PINION_IN, 100000, 250, 0, 0);
+  pwm_start(PINION_OUT, 100000, 250, 0, 0);
+}
+
 //LEAD SCREW CONTROL
 
 /*
  *Raise arm platform to top of lead screw
  */
-void raiseArmToTop(){
+void raiseArmToTop(Servo ourServo){
+  ourServo.write(closed);
   Serial.println ("raiseArmToTop");
-       pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 1);
-       pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 1);
+  pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 1);
+  pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 1);
 
-       Serial.print("Switch status:");
-       Serial.println(digitalRead(LEAD_SCREW_TOP_SWITCH));
+  Serial.print("Switch status:");
+  Serial.println(digitalRead(LEAD_SCREW_TOP_SWITCH));
 
-       while (digitalRead(LEAD_SCREW_TOP_SWITCH)==LOW){
-       pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, liftSpeed, 0);
-       pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 0);
-       }
+  while (digitalRead(LEAD_SCREW_TOP_SWITCH)==LOW){
+    pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, liftSpeed, 0);
+    pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 0);
+    delay(100);
+  }
        
-       pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 0);
-       pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 0);
+  pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 0);
+  pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 0);
 }
 
 /*
  *Lower arm platform to bottom of lead screw
  */
 void lowerArmToBottom(){
-       pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 1);
-       pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 1);
+  //Initialize motors
+  pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 1);
+  pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 1);
 
-       while (digitalRead(LEAD_SCREW_BOTTOM_SWITCH)==LOW){
-       pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 0);
-       pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, descendSpeed, 0);
-       }
-       
-       pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 0);
-       pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 0);
+  while (digitalRead(LEAD_SCREW_BOTTOM_SWITCH)==LOW){
+    //Turn motor on upwards
+    pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 0);
+    pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, descendSpeed, 0);
+    delay(100);
+  }
+  //Stop motor
+  pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 0);
+  pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 0);
 }
 
-void lowerArmToPost (){
+void lowerArmToPost (Servo ourServo){
+  //ourServo.write(rest);
+  ourServo.write(40);
     pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 1);
     pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 1);
 
@@ -201,10 +230,11 @@ void lowerArmToPost (){
     pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 0);
     pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 150, 0);
     delay (100);
+    //No serial print statements in this loop
   }
 
-    pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 0);
-    pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 0);
+  pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 0);
+  pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 0);
 
     // Serial.print("Right claw switch: ");
     // Serial.println(digitalRead(RIGHT_CLAW_SWITCH_PIN));
@@ -212,4 +242,69 @@ void lowerArmToPost (){
     // Serial.println(digitalRead(LEFT_CLAW_SWITCH_PIN));
     // Serial.print("Lead screw bottom switch: ");
     // Serial.println(digitalRead(LEAD_SCREW_BOTTOM_SWITCH));
+}
+
+void movePinionOut (float targetDistance){
+  int counter = 0;
+  int currentStateCLK;
+  int previousStateCLK = digitalRead(INPUT_CLK); 
+  String encdir ="";
+  float distance =0;
+  Serial.println("targetDistance");
+  Serial.println(targetDistance);
+  
+  pwm_start(PINION_IN, 100000, 250, 0, 1);
+  pwm_start(PINION_OUT, 100000, 250, 0, 1);
+
+  while(distance < targetDistance){
+   // Read the current state of inputCLK
+   currentStateCLK = digitalRead(INPUT_CLK);
+   // If the previous and the current state of the inputCLK are different then a pulse has occured
+   if (currentStateCLK != previousStateCLK){ 
+     // If the inputDT state is different than the inputCLK state then the encoder is rotating counterclockwise
+     if (digitalRead(INPUT_DT) != currentStateCLK) { 
+       counter --;
+       encdir ="CCW";
+     } else {
+       // Encoder is rotating clockwise
+       counter ++;
+       encdir ="CW";
+     }
+   }
+     //CHECK
+     distance = counter*pinionDistanceMultiplier;
+      // keep powering the motor until the distance is right
+      pwm_start(PINION_IN, 100000, 250, 0, 0);
+      pwm_start(PINION_OUT, 100000, 250, rackSpeed, 0);
+     
+      // Update previousStateCLK with the current state
+      previousStateCLK = currentStateCLK; 
+   }
+      pwm_start(PINION_IN, 100000, 250, 0, 0);
+      pwm_start(PINION_OUT, 100000, 250, 0, 0);
+
+      //  Serial.print("Direction: ");
+      //  Serial.print(encdir);
+      //  Serial.print(" -- Value: ");
+      //  Serial.println(counter);
+      Serial.println(distance);
+}
+
+void raiseArm(float setHeight){
+  pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 1);
+  pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 1);
+  int counter = 0;
+  float heightMultiplier = 1; //CHANGE
+  float currentHeight = 0;
+
+  while (currentHeight != setHeight){
+    //add the QRD as a counter in here.
+    pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, liftSpeed, 0);
+    pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 0);
+    delay(100);
+    currentHeight = counter*heightMultiplier;
+  }
+       
+  pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 0);
+  pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 0);
 }

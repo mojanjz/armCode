@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <Servo.h>
+#include <movement.h>
 
 #define GOING_TO_MAX 0
 #define ROTATING_ARM_TO_SIDE 1
@@ -15,13 +16,15 @@
 #define LOWERING_ARM_TO_DRIVE 8
 #define ADJUST_CLAW_POSITIONING 9
 
+#define stoneDelay 100
+
 #define DISTANCE_MULTIPLIER 1 //mapping sonar distance to encoder distance
 
 int pickupMode(int direction, int postDistance);
 
 // bool atThePost;
 
-extern Servo clawServo;
+//extern Servo clawServo;
 //extern Servo armServo;
 
 #endif

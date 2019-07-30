@@ -91,14 +91,15 @@ void setup() {
   Wire.onRequest(requestEvent);
   pinMode(LED_PIN, OUTPUT);
   //CLAW SERVO
-  clawServo.attach(SERVO_PIN);
-  clawServo.write(rest);
+  // clawServo.attach(SERVO_PIN);
+  // clawServo.write(rest);
   //RACK & PINION
   pinMode (INPUT_CLK,INPUT); //potentially pull up?
   pinMode (INPUT_DT,INPUT); //potentially pull up?
   pinMode(RIGHT_CLAW_SWITCH_PIN, INPUT_PULLUP);
   pinMode(LEFT_CLAW_SWITCH_PIN, INPUT_PULLUP);
   pinMode(PICKUP_SWITCH_PIN, INPUT_PULLUP);
+  pinMode(RACK_LIMIT_SWITCH,INPUT_PULLUP);
   
   //Arm Servo
   //armServo.attach(ARM_SERVO_PIN);
@@ -111,7 +112,10 @@ void setup() {
 
 //lowerArmToBottom();
 //raiseArmToTop();
-
+//writeToRackAndPinion(10,0);
+  clawServo.write(rest);
+  resetRack();
+//fullSendRack();
   delay(500);
   Serial.println("Setup");
 }
