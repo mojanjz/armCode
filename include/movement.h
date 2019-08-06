@@ -5,17 +5,17 @@
 #include <Servo.h>
 //CLAW
 #define closed 0 //degrees
-#define rest 15 //degrees
+#define rest 20 //degrees
 //RACK & PINION
 #define pinionDiameter 2.5//cm
 //LEAD SCREW
 #define descendSpeed 170
 #define liftSpeed 220
-#define rackSpeed 100
+#define rackSpeed 165
 //BOTTOM SERVO
-#define straight 25
-#define leftAngle 90
-#define rightAngle 0
+#define straight 150
+#define leftAngle 220
+#define rightAngle 90
 
 boolean clawPickupAttempt (Servo);
 void writeSpeed(Servo , int , int );
@@ -25,7 +25,7 @@ boolean pickUpStone(Servo);
 float writeToRackAndPinion (float, float);
 void raiseArmToTop(Servo);
 void lowerArmToBottom();
-void lowerArmToPost(Servo);
+boolean lowerArmToPost(Servo);
 void resetRack ();
 void fullSendRack();
 void movePinionOut (float);

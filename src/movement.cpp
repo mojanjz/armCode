@@ -6,11 +6,10 @@
 #include <Servo.h>
 #include <sensors.h>
 
-const float pinionDistanceMultiplier = pinionDiameter*PI/48;
+const float pinionDistanceMultiplier = pinionDiameter*PI/48; //change this
 
 boolean alignClaw (Servo ourServo){
   bool successful = false;
-
 
   return successful;
 }
@@ -25,7 +24,8 @@ boolean clawPickupAttempt(Servo ourServo)
 {
   boolean successful = false;
   Serial.println("Attempting to close servo on inf stone:");
-  ourServo.write(closed);
+  ourServo.write(closed); 
+  //ourServo.write(20); 
   //wait for servo to get there
   delay(1000);
   Serial.print("Status:");
@@ -211,9 +211,9 @@ void lowerArmToBottom(){
   pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 0);
 }
 
-void lowerArmToPost (Servo ourServo){
-  //ourServo.write(rest);
-  ourServo.write(40);
+boolean lowerArmToPost (Servo ourServo){
+  
+    ourServo.write(rest);
     pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 1);
     pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 1);
 
@@ -226,11 +226,15 @@ void lowerArmToPost (Servo ourServo){
 
 
 //TO FIX = CHANGE SECOND LEFT SWITCH CONDITIONAL STATEMENT, TO RIGHT SWITCH CONDITIONAL STATEMENT - RIGHT SWITCH ALWAYS HIGH!
-  while ( digitalRead(LEFT_CLAW_SWITCH_PIN)== LOW && digitalRead(LEFT_CLAW_SWITCH_PIN)== LOW && digitalRead(LEAD_SCREW_BOTTOM_SWITCH) !=HIGH ){
+  while (digitalRead(LEFT_CLAW_SWITCH_PIN)== LOW && digitalRead(LEFT_CLAW_SWITCH_PIN)== LOW && digitalRead(LEAD_SCREW_BOTTOM_SWITCH) !=HIGH ){
     pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 0);
     pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 150, 0);
     delay (100);
     //No serial print statements in this loop
+  }
+
+  if(digitalRead(LEAD_SCREW_BOTTOM_SWITCH) == HIGH){
+    return false;
   }
 
   pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 0);
@@ -242,6 +246,8 @@ void lowerArmToPost (Servo ourServo){
     // Serial.println(digitalRead(LEFT_CLAW_SWITCH_PIN));
     // Serial.print("Lead screw bottom switch: ");
     // Serial.println(digitalRead(LEAD_SCREW_BOTTOM_SWITCH));
+    
+    return true;
 }
 
 void movePinionOut (float targetDistance){
@@ -249,12 +255,22 @@ void movePinionOut (float targetDistance){
   int currentStateCLK;
   int previousStateCLK = digitalRead(INPUT_CLK); 
   String encdir ="";
-  float distance =0;
-  Serial.println("targetDistance");
-  Serial.println(targetDistance);
+  float distance = 0;
+
+  float distanceOffset = 3.525; //distance offset from arm to sonar in cm
+  targetDistance += distanceOffset;
   
   pwm_start(PINION_IN, 100000, 250, 0, 1);
   pwm_start(PINION_OUT, 100000, 250, 0, 1);
+
+   Serial.println("targetDistance");
+   Serial.println(targetDistance);
+
+  // If the sonar sends a crazy value, just make it 30cm
+  if(targetDistance > 20){
+    targetDistance = 20;
+    Serial.print("Target distance is insane, changing it to 30cm");
+  }
 
   while(distance < targetDistance){
    // Read the current state of inputCLK
@@ -290,21 +306,51 @@ void movePinionOut (float targetDistance){
       Serial.println(distance);
 }
 
-void raiseArm(float setHeight){
-  pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 1);
-  pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 1);
-  int counter = 0;
-  float heightMultiplier = 1; //CHANGE
-  float currentHeight = 0;
+// void raiseArm(float setHeight){
+//   pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 1);
+//   pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 1);
+//   int counter = 0;
+//   float heightMultiplier = 1; //CHANGE
+//   float currentHeight = 0;
 
-  while (currentHeight != setHeight){
-    //add the QRD as a counter in here.
-    pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, liftSpeed, 0);
-    pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 0);
-    delay(100);
-    currentHeight = counter*heightMultiplier;
-  }
+//   while (currentHeight != setHeight){
+//     //add the QRD as a counter in here.
+//     pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, liftSpeed, 0);
+//     pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 0);
+//     delay(100);
+//     currentHeight = counter*heightMultiplier;
+//   }
        
-  pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 0);
-  pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 0);
-}
+//   pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 0);
+//   pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 0);
+// }
+
+
+//raises the arm to the correct height in INCHES:
+// Should we do the height off the ground, the height off the robot, or the height from bottom arm switch?
+// void raiseArm(float setHeight){
+//   pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 1);
+//   pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 1);
+//   int counter = 0;
+//   float heightMultiplier = 1/16; 
+//   float currentHeight = 0;
+//   boolean prevQRDState;
+//   boolean currentQRDState = OFF;
+
+//   pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 200, 0);
+//   pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 0);
+
+//   while (currentHeight != setHeight && digitalRead(LEAD_SCREW_TOP_SWITCH) != HIGH && digitalRead(LEAD_SCREW_BOTTOM_SWITCH) != HIGH){
+//     currentQRDState = digitalRead(QRD_PIN);
+//     //add the QRD as a counter in here.
+
+//     if(currentQRDState!=prevQRDState){
+//       counter++;
+//       prevQRDState = currentQRDState;
+//     }
+//     currentHeight = counter*heightMultiplier;
+//   }  
+
+//   pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 0);
+//   pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 0);
+// }

@@ -20,7 +20,7 @@
 
 #define DISTANCE_MULTIPLIER 1 //mapping sonar distance to encoder distance
 
-int pickupMode(int direction, int postDistance);
+int pickupMode(int direction, float postDistance);
 
 // bool atThePost;
 
