@@ -3,7 +3,6 @@
 
 // #define serialTesting 0 
 
-#define BPILL_ADDRESS 69
 #define BUFFER_SIZE 3
 
 //Pins for arm
@@ -21,16 +20,16 @@
 
 
 //Pins for lead screw
- #define LEAD_SCREW_UP_PIN PB_7
- #define LEAD_SCREW_DOWN_PIN PB_6
+ #define LEAD_SCREW_UP_PIN PA_6
+ #define LEAD_SCREW_DOWN_PIN PA_7
 
 
 //CHANGE BACK
 // #define LEAD_SCREW_BOTTOM_SWITCH PB10
 // #define LEAD_SCREW_TOP_SWITCH PB11
 
-#define LEAD_SCREW_BOTTOM_SWITCH PC13
-#define LEAD_SCREW_TOP_SWITCH PC14
+#define LEAD_SCREW_BOTTOM_SWITCH PC14
+#define LEAD_SCREW_TOP_SWITCH PC15
 
 #define ARM_SERVO_PIN PA1 
 
@@ -40,9 +39,9 @@
 
 //#define ARM_SONAR_OFFSET 6.065 //TO BE CHECKED
 
-#define PING 0
 #define PICKUP 1
 #define PUTDOWN 2
+#define IDLE 3
 
 #define LEFT 0
 #define RIGHT 1

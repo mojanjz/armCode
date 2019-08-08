@@ -10,6 +10,6 @@
 #define EXTEND_ARM 2
 #define DROP_STONE 3
 
-int depositMode(int);
+int depositMode(Servo);
 
 #endif

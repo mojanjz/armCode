@@ -7,27 +7,27 @@
 #include <Servo.h>
 #include <movement.h>
 
-#define SONAR_ECHO PA7
-#define SONAR_TRIG PA6
-#define LED_PIN PB14
+// #define SONAR_ECHO PA7
+// #define SONAR_TRIG PA6
+//#define LED_PIN PB14
 
-#define BPILL_ADDRESS 69
+//#define BPILL_ADDRESS 69
 #define BUFFER_SIZE 3
 
 
-float armHeight = 0.0;
-float armLength = 0.0;
-bool clawSuccess = 0.0;
-float armAngle = 0.0;
+// float armHeight = 0.0;
+// float armLength = 0.0;
+// bool clawSuccess = 0.0;
+// float armAngle = 0.0;
 
-int state = GOING_TO_MAX;
+//int state = GOING_TO_MAX;
 int action = 0;
 int direction;
 int postDistance;
 
 // //int counter = 0;
 
-Servo clawServo;
+// Servo clawServo;
 Servo armServo;
 
 volatile int x = 10000;
@@ -101,8 +101,8 @@ void setup() {
   //pinMode(LED_PIN, OUTPUT);
 
   //CLAW SERVO
-  clawServo.attach(CLAW_SERVO_PIN);
-  clawServo.write(rest);
+  // clawServo.attach(CLAW_SERVO_PIN);
+  // clawServo.write(rest);
 
   //RACK & PINION
   pinMode (INPUT_CLK,INPUT); 
@@ -112,22 +112,46 @@ void setup() {
   pinMode(PICKUP_SWITCH_PIN, INPUT_PULLUP);
   pinMode(RACK_LIMIT_SWITCH,INPUT_PULLUP);
   
-  //Arm Servo
-  armServo.attach(ARM_SERVO_PIN);
   // Initialize the motors 
   pinMode(LEAD_SCREW_BOTTOM_SWITCH,INPUT_PULLUP);
   pinMode(LEAD_SCREW_TOP_SWITCH,INPUT_PULLUP);
   pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 1);
   pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 1);
 
-  //lowerArmToBottom();
-  //raiseArmToTop();
+  //Arm Servo
+  armServo.attach(ARM_SERVO_PIN);
+
+  armServo.write(straight);
+  Serial.println("Turned arm");
+  resetRack();
+  Serial.println("Reset rack");
+  lowerArmToBottom();
+  // raiseArmToTop(clawServo);
   //writeToRackAndPinion(10,0);
   // clawServo.write(rest);
-  //resetRack();
-  //fullSendRack();
+
   delay(500);
   Serial.println("Setup");
+  // armServo.write(0);
+  // delay(2000);
+  // armServo.write(110);
+  // delay(2000);
+  // armServo.write(220);
+  // delay(2000);
+  
+  // delay(2000);
+  // armServo.write(180);
+  // delay(2000);
+  // armServo.write(90);
+  // delay(2000);
+  // writeSpeed(armServo,400,0);
+  // Serial.println("Printing to 0 deg");
+  // writeSpeed(armServo, 400, 110);
+  //   Serial.println("Printing to 110 deg");
+
+  // writeSpeed(armServo,400,220);
+  //   Serial.println("Printing to 220 deg");
+
 }
 
 void loop() {
@@ -137,43 +161,67 @@ void loop() {
     x = Serial3.read();
     receiveSerialBuffer[receivedInts] = x;
     receivedInts++;
+    // Serial.print("Buffer:");
+    // Serial.println(x);
   }
   // if (action != 0){
   //   delay(1000);
   //   Serial3.write(IN_PROGRESS);
   // }
 
-  Serial.println("received from master: ");
-  Serial.println(String(receiveSerialBuffer[0]));
-  Serial.println(String(receiveSerialBuffer[1]));
-  Serial.println(String(receiveSerialBuffer[2]));
 
-  action = receiveSerialBuffer[0];
-  direction = receiveSerialBuffer[1];
-  postDistance = receiveSerialBuffer[2];
+  // Serial.println("received from master: ");
+  // Serial.println(String(receiveSerialBuffer[0]));
+  // Serial.println(String(receiveSerialBuffer[1]));
+  // Serial.println(String(receiveSerialBuffer[2]));
+
+  //DELAY MUST BE HERE!
+  delay(1000);
+
+  action = (int)receiveSerialBuffer[0];
+  direction = (int)receiveSerialBuffer[1];
+  postDistance = (int)receiveSerialBuffer[2];
+
+  doneYet = IN_PROGRESS;
 
   switch (action){
-    // case PING:
-    // break;
-
     case PICKUP:
       Serial.println("Pickup switch statement");
+      Serial.print("Direction:");
+      Serial.println(direction);
       //change that the action is either complete, or unable
-      doneYet = (byte) pickupMode(direction,postDistance);
-      // #ifdef serialTesting
-      // Serial.print("doneYet:");
-      // Serial.println(doneYet);
-      // #endif
+      doneYet = (byte) pickupMode(direction,postDistance, armServo);
+      #ifdef serialTesting
+      Serial.print("doneYet:");
+      Serial.println(doneYet);
+      #endif
+
+      Serial.print("Done yet:");
+      Serial.println(doneYet); 
       Serial3.write(doneYet);
+
+
+      receiveSerialBuffer[0] = 0;
+      receiveSerialBuffer[1] = 0;
+      receiveSerialBuffer[2] = 0;
+
+      action = IDLE;
 
     break;
 
     case PUTDOWN:
+    //doneYet = (byte) deposit(armServo);
+    //   Serial3.write(doneYet);
+      // receiveSerialBuffer[0] = 0;
+      // receiveSerialBuffer[1] = 0;
+      // receiveSerialBuffer[2] = 0;
+
+      //action = IDLE;
     break;
+
+    case IDLE:
+    break;
+
   }
   action = 0;
-  receiveSerialBuffer[0] = 0;
-  receiveSerialBuffer[1] = 0;
-  receiveSerialBuffer[2] = 0;
 }
- 

@@ -7,7 +7,7 @@ int stoneTimer = 0;
 boolean result = false;
 boolean resultArm = false;
 
-int pickupMode(int direction, float postDistance) {
+int pickupMode(int direction, float postDistance, Servo armServo) {
 
 int complete = IN_PROGRESS; //Status of complete pickup operation
 
@@ -18,17 +18,19 @@ int state = GOING_TO_MAX;
 //ensure rack is at position 0 when starting robot/ running code!
 // int rackDistance = 0;
 
-Servo armServo;
+//Servo armServo;
 Servo clawServo;
-armServo.attach(ARM_SERVO_PIN);
+//armServo.attach(ARM_SERVO_PIN);
 clawServo.attach(CLAW_SERVO_PIN);
 
 // bool pickedUpYet = false;
 Serial.println("Pickup Mode:");
 
 //MAKE SURE EVERTHING IS SET UP PROPERLY TO START
-//resetRack(); CHANGE
+resetRack(); //CHANGE
+// Serial.println("Writing to straight intially");
 armServo.write(straight);
+delay(2000);
 //lowerArmToBottom(); CHANGE
 
 while (complete == IN_PROGRESS){
@@ -45,22 +47,22 @@ while (complete == IN_PROGRESS){
         break;
 
         case ROTATING_ARM_TO_SIDE:
-            // // call servo and write to 90 depending on which side the post is on.
-            // Serial.println("Rotating arm to side!");
-            // if(direction == LEFT){
-            //   //Serial.println("Rotating arm to left:");
-            //  armServo.write(leftAngle); 
-            //  delay(1000);
-            // }
-            // else if(direction == RIGHT){
-            // //     Serial.println("Rotating arm to right:");
-            // armServo.write(rightAngle);
-            // delay(1000);
-            // } else {
-            //     Serial.println("No valid direction sent to slave.");
-            //     complete = UNABLE;
-            //     break;
-            // }
+            // call servo and write to 90 depending on which side the post is on.
+            Serial.println("Rotating arm to side!");
+            if(direction == LEFT){
+              Serial.println("Rotating arm to left:");
+             armServo.write(190); 
+             delay(2000);
+            }
+            else if(direction == RIGHT){
+            Serial.println("Rotating arm to right:");
+            armServo.write(0);
+            delay(2000);
+            } else {
+                Serial.println("No valid direction sent to slave.");
+                complete = UNABLE;
+                break;
+            }
             state = EXPAND_ARM;
             //complete = COMPLETE;
             Serial.println("Going to expand");
@@ -69,8 +71,10 @@ while (complete == IN_PROGRESS){
         case EXPAND_ARM:
             Serial.println("Expand Arm:");
 
+            //CHANGE THIS BACK
+            
             movePinionOut(postDistance);
-            //movePinionOut(3.00);
+            //movePinionOut(10.00);
             state = LOWERING_ARM;
             //complete = COMPLETE;
         break;
@@ -78,7 +82,8 @@ while (complete == IN_PROGRESS){
         case LOWERING_ARM:
             Serial.println("Lowering Arm:");
             resultArm = lowerArmToPost(clawServo);
-
+            Serial.print("lower limit switch status: ");
+            Serial.println(digitalRead(LEAD_SCREW_BOTTOM_SWITCH));
             //If the lead screw bottom switch gets pressed, we were unable to pickup the stone
             if(resultArm == false){
              complete = UNABLE;
@@ -99,15 +104,21 @@ while (complete == IN_PROGRESS){
             Serial.println("Pickup Stone:");
             result = clawPickupAttempt(clawServo);
 
+            //COMMENT IN IF YOU WANT IT TO SEND UNSUCCESSFUL WHEN STONE ISNT PICKED UP
+
             //if the claw switch wasnt pressed, we didnt pick up a stone. Unsuccessful.
-            // if(result == false){
-            //     complete = UNABLE; 
-            //     break; 
-            // }
+            if(result == false){
+                raiseArmToTop(armServo);
+                resetRack();
+                armServo.write(straight);
+                lowerArmToBottom();
+                complete = UNABLE; 
+                break; 
+            }
             state = RAISE_ARM_AFTER_PICKUP;
         break;
 
-        //Set a timer for like 2s, so it doesnt go all the way to the top
+        //Set a timer for like 2s, so it doesnt go all the way to the top??
         case RAISE_ARM_AFTER_PICKUP:
             Serial.println("Raising arm after pickup:");
             raiseArmToTop(clawServo);

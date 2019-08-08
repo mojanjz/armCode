@@ -25,13 +25,16 @@ boolean clawPickupAttempt(Servo ourServo)
   boolean successful = false;
   Serial.println("Attempting to close servo on inf stone:");
   ourServo.write(closed); 
-  //ourServo.write(20); 
-  //wait for servo to get there
-  delay(1000);
-  Serial.print("Status:");
-  Serial.println(successful);
+  //Gives claw enough time to make adjustments before checking if stone was retreived
+  delay(3000);
   //check if switch is actuated
   successful = digitalRead(PICKUP_SWITCH_PIN);
+  Serial.print("Status:");
+  Serial.println(successful);
+
+  if(successful==true){
+    ourServo.write(0);
+  }
 
   return successful;
 }
@@ -146,6 +149,11 @@ else{
    return rackPosition + distance;
 }
 
+//RACK & PINION CONTROL
+/*
+ *Resets rack to its home retracted position.
+ *Note: Dependent on RACK_LIMIT_SWITCH
+ */
 void resetRack (){
   pwm_start(PINION_IN, 100000, 250, 0, 1);
   pwm_start(PINION_OUT, 100000, 250, 0, 1);
@@ -211,6 +219,14 @@ void lowerArmToBottom(){
   pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 0);
 }
 
+//LOWER ARM TO POST
+/*
+ * Lowers the arm until either the right or left switches on the claw are pressed, 
+ * in which case it is known that the claw has reached the post successfully and it returns successful.
+ * If the arm lowers until the lead screw lower limit switch, then the arm was not successfully
+ * lowered to the post, and it returns unsuccessful.
+ */
+
 boolean lowerArmToPost (Servo ourServo){
   
     ourServo.write(rest);
@@ -226,19 +242,22 @@ boolean lowerArmToPost (Servo ourServo){
 
 
 //TO FIX = CHANGE SECOND LEFT SWITCH CONDITIONAL STATEMENT, TO RIGHT SWITCH CONDITIONAL STATEMENT - RIGHT SWITCH ALWAYS HIGH!
-  while (digitalRead(LEFT_CLAW_SWITCH_PIN)== LOW && digitalRead(LEFT_CLAW_SWITCH_PIN)== LOW && digitalRead(LEAD_SCREW_BOTTOM_SWITCH) !=HIGH ){
+  while (digitalRead(RIGHT_CLAW_SWITCH_PIN)== LOW && digitalRead(LEFT_CLAW_SWITCH_PIN)== LOW && digitalRead(LEAD_SCREW_BOTTOM_SWITCH) !=HIGH ){
     pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 0);
     pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 150, 0);
     delay (100);
     //No serial print statements in this loop
   }
 
+  pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 0);
+  pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 0);
+
   if(digitalRead(LEAD_SCREW_BOTTOM_SWITCH) == HIGH){
+    Serial.println("reached bottom");
     return false;
   }
 
-  pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 0);
-  pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 0);
+
 
     // Serial.print("Right claw switch: ");
     // Serial.println(digitalRead(RIGHT_CLAW_SWITCH_PIN));
@@ -249,6 +268,14 @@ boolean lowerArmToPost (Servo ourServo){
     
     return true;
 }
+//MOVE RACK AND PINION 
+/*
+ *Moves rack and pinion to specified position
+ *Takes the target distance as sent from the sonar, adds on the appropriate offset from the
+ *rack limit switch to the sonar, and moves the rack and pinion to that position.
+ *If the target distance is greater than 20cm, then it is truncated to 20cm as the rack cannot
+ *move out further than that distance.
+ */
 
 void movePinionOut (float targetDistance){
   int counter = 0;
@@ -257,7 +284,8 @@ void movePinionOut (float targetDistance){
   String encdir ="";
   float distance = 0;
 
-  float distanceOffset = 3.525; //distance offset from arm to sonar in cm
+  //float distanceOffset = 3.525; //distance offset from arm to sonar in cm
+  float distanceOffset = 5.5; //distance offset from arm to sonar in cm
   targetDistance += distanceOffset;
   
   pwm_start(PINION_IN, 100000, 250, 0, 1);
@@ -269,7 +297,7 @@ void movePinionOut (float targetDistance){
   // If the sonar sends a crazy value, just make it 30cm
   if(targetDistance > 20){
     targetDistance = 20;
-    Serial.print("Target distance is insane, changing it to 30cm");
+    Serial.print("Target distance is insane, changing it to 20cm");
   }
 
   while(distance < targetDistance){
@@ -303,27 +331,34 @@ void movePinionOut (float targetDistance){
       //  Serial.print(encdir);
       //  Serial.print(" -- Value: ");
       //  Serial.println(counter);
-      Serial.println(distance);
+      //Serial.println(distance);
 }
 
-// void raiseArm(float setHeight){
-//   pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 1);
-//   pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 1);
-//   int counter = 0;
-//   float heightMultiplier = 1; //CHANGE
-//   float currentHeight = 0;
-
-//   while (currentHeight != setHeight){
-//     //add the QRD as a counter in here.
-//     pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, liftSpeed, 0);
-//     pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 0);
-//     delay(100);
-//     currentHeight = counter*heightMultiplier;
-//   }
-       
-//   pwm_start(LEAD_SCREW_UP_PIN, 100000, 250, 0, 0);
-//   pwm_start(LEAD_SCREW_DOWN_PIN, 100000, 250, 0, 0);
-// }
+void writeSpeed(Servo ourServo, int speed, int setpos)
+{
+//int pos = 0;    // variable to store the servo position
+int pause = speed/10;
+int currpos = ourServo.read();
+//If the current position is less than the set position, move ccw to setpos
+if(currpos<setpos){
+for (int pos = currpos; pos <= setpos; pos += 1) { 
+    // in steps of 1 degree
+    ourServo.write(pos);              
+    delay(pause);                       
+  }
+}
+//If the current position is more than the set position, move cw to setpos
+if(currpos>setpos){
+for (int pos = currpos; pos >= setpos; pos -= 1) { 
+    // in steps of 1 degree
+    ourServo.write(pos);              
+    delay(pause);                      
+}
+}
+else{
+//do nothing
+}
+}
 
 
 //raises the arm to the correct height in INCHES:
